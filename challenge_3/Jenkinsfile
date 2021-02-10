@@ -1,0 +1,29 @@
+pipeline {
+  agent {
+    'The agent'
+  }
+
+  environment {
+    MY_VAR = 'Bruno Nelli'
+  }
+
+  stages {
+    stage('Creating Directory') {
+      steps {
+        node { sh 'ls -l' dir ('folder') { writeFile file:'example_file', text:'' } sh 'ls -l' }
+        }
+      }
+    stage('Write environment in file') {
+      steps {
+        #TODO
+      }
+    }
+    post {
+      always{
+        dir ('folder') {
+          deleteDir()
+          }
+      }
+    }
+  }
+}
