@@ -1,29 +1,31 @@
 pipeline {
-  agent {
-    'The agent'
-  }
-
-  environment {
-    MY_VAR = 'Bruno Nelli'
-  }
-
-  stages {
-    stage('Creating Directory') {
-      steps {
-        node { sh 'ls -l' dir ('folder') { writeFile file:'example_file', text:'' } sh 'ls -l' }
+    agent any
+    environment {
+        MY_ENV = 'Bruno Nelli'
+    }
+    stages {
+        stage('Creating directory, file and listing files') {
+            steps {
+                bat label: 'create_dir', script: 'mkdir test_directory'
+                dir('test_directory') {
+                    writeFile file: 'text_file.txt', text: ''
+                    bat label: 'list_files', script: 'ls'
+                }
+            }
         }
-      }
-    stage('Write environment in file') {
-      steps {
-        #TODO
-      }
+        stage('Replacing Environment variable in text file') {
+            steps {
+                dir('test_directory') {
+                    writeFile file:'text_file.txt', text:"${MY_ENV}"
+                }
+            }
+        }
     }
     post {
-      always{
-        dir ('folder') {
-          deleteDir()
-          }
-      }
+        always{
+            dir ('test_directory') {
+                deleteDir()
+            }
+        }
     }
-  }
 }
